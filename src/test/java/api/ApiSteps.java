@@ -20,9 +20,14 @@ public class ApiSteps {
     @Given("User sends GET request to {string}")
     public void user_sends_get_request(String endpoint) {
         response = given()
+                .header("Accept", "application/json")
                 .when()
-                .get(endpoint);
+                .get("https://reqres.in/api/users?page=2");
+
+        System.out.println("Response Status: " + response.getStatusCode());
+        System.out.println("Response Body: " + response.getBody().asPrettyString());
     }
+
 
     @Then("Status code should be {int}")
     public void status_code_should_be(Integer code) {

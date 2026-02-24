@@ -5,6 +5,6 @@ import io.restassured.RestAssured;
 public class ApiBase {
 
     public static void setup() {
-        RestAssured.baseURI = "https://reqres.in";
+    	RestAssured.baseURI = "https://jsonplaceholder.typicode.com";
     }
 }

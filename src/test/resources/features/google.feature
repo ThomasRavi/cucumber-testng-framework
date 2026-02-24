@@ -1,3 +1,4 @@
+@ui
 Feature: Google
 
 Scenario: Search Selenium

@@ -10,7 +10,7 @@ public class Hooks {
     static ExtentReports extent = ExtentManager.getInstance();
     static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
 
-    @Before
+    @Before("@ui")
     public void setup(Scenario scenario) {
 
         DriverFactory.initDriver(ConfigReader.get("browser"));
@@ -21,7 +21,7 @@ public class Hooks {
         test.set(extentTest);
     }
 
-    @After
+    @After("@ui")
     public void tearDown(Scenario sc) {
 
         if (sc.isFailed()) {
