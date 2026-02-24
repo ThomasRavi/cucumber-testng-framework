@@ -27,6 +27,8 @@ public void search(String text) {
     DriverFactory.getDriver()
         .findElement(By.name("q"))
         .sendKeys(text + Keys.ENTER);
+    
+    
     new WebDriverWait(DriverFactory.getDriver(), Duration.ofSeconds(5))
     .until(ExpectedConditions.titleContains(text));
 }
