@@ -25,3 +25,8 @@ test-output/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Eclipse files
+.settings/
+.classpath
+.project
