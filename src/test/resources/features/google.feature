@@ -4,7 +4,7 @@ Feature: Google
 Scenario: Search Selenium
 Given User opens Google
 When User searches "Selenium"
-Then Title contains "Selenium"
+Then Title contains "Seleniuum"
 
 Scenario: Search Cucumber
 Given User opens Google

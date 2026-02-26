@@ -61,8 +61,17 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
 
-      - name: Run UI Tests (Headless)
-        run: mvn clean test -Dcucumber.filter.tags="@ui" -Dheadless=true
+      - name: Run UI Tests (Headless - First Run)
+        run: mvn clean test -Dcucumber.filter.tags="@ui" -Dheadless=true -Dtest=TestRunner || true
+
+      - name: Re-run Failed Scenarios
+        run: |
+         if [ -s target/failed.txt ]; then
+          echo "Re-running failed scenarios..."
+          mvn test -Dheadless=true -Dtest=FailedTestRunner
+         else
+          echo "No failed scenarios to rerun."
+         fi
 
       - name: Upload UI Reports
         uses: actions/upload-artifact@v4

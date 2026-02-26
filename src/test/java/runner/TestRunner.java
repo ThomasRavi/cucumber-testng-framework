@@ -2,18 +2,24 @@ package runner;
 
 import io.cucumber.testng.*;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Listeners;
 
 @CucumberOptions(
-features="src/test/resources/features",
-glue={"stepdefinitions","hooks","api"},
-tags	="@api",
-plugin={"pretty","html:target/report.html"}
-)
+	    features="src/test/resources/features",
+	    glue={"stepdefinitions","hooks","api"},
+	    tags="@ui",
+	    plugin={
+	        "pretty",
+	        "html:target/report.html",
+	        "rerun:target/failed.txt"
+	    }
+	)
+
 public class TestRunner extends AbstractTestNGCucumberTests {
 
-@Override
-@DataProvider(parallel=true)
-public Object[][] scenarios(){
-return super.scenarios();
-}
+    @Override
+    @DataProvider(parallel=true)
+    public Object[][] scenarios(){
+        return super.scenarios();
+    }
 }
