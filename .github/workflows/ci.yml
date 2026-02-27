@@ -41,7 +41,7 @@ jobs:
           path: target/
 
 
-    ui-tests:
+  ui-tests:
     name: UI Tests (Selenium Grid)
     runs-on: ubuntu-latest
 
