@@ -41,7 +41,7 @@ jobs:
           path: target/
 
 
-  ui-tests:
+    ui-tests:
     name: UI Tests (Selenium Grid)
     runs-on: ubuntu-latest
 
@@ -64,8 +64,17 @@ jobs:
       - name: Start Selenium Grid
         run: docker compose up -d
 
-      - name: Wait for Grid to be ready
-        run: sleep 15
+      - name: Wait for Selenium Grid to be ready
+        run: |
+          echo "Waiting for Selenium Grid..."
+          for i in {1..30}; do
+            if curl -s http://localhost:4444/status | grep '"ready": true'; then
+              echo "Selenium Grid is ready!"
+              break
+            fi
+            echo "Grid not ready yet... retrying"
+            sleep 2
+          done
 
       - name: Run UI Tests
         run: mvn clean test -Dcucumber.filter.tags="@ui"
