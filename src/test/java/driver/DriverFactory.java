@@ -1,39 +1,41 @@
 package driver;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.firefox.FirefoxOptions;
+
+import java.net.URL;
 
 public class DriverFactory {
 
     private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
+    private static final String GRID_URL = "http://localhost:4444";
+
     public static void initDriver(String browser) {
 
-    	if (browser.equalsIgnoreCase("chrome")) {
+        try {
 
-    	    WebDriverManager.chromedriver().setup();
+            if (browser.equalsIgnoreCase("chrome")) {
 
-    	    ChromeOptions options = new ChromeOptions();
+                ChromeOptions options = new ChromeOptions();
+                driver.set(new RemoteWebDriver(new URL(GRID_URL), options));
 
-    	    // Headless mode for CI
-    	    if ("true".equalsIgnoreCase(System.getProperty("headless"))) {
-    	        options.addArguments("--headless=new");
-    	        options.addArguments("--no-sandbox");
-    	        options.addArguments("--disable-dev-shm-usage");
-    	        options.addArguments("--window-size=1920,1080");
-    	    }
+            } else if (browser.equalsIgnoreCase("firefox")) {
 
-    	    driver.set(new ChromeDriver(options));
+                FirefoxOptions options = new FirefoxOptions();
+                driver.set(new RemoteWebDriver(new URL(GRID_URL), options));
 
-    	}  else {
-            WebDriverManager.firefoxdriver().setup();
-            driver.set(new FirefoxDriver());
+            } else {
+                throw new RuntimeException("Unsupported browser: " + browser);
+            }
+
+            driver.get().manage().window().maximize();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to connect to Selenium Grid", e);
         }
-
-        getDriver().manage().window().maximize();
     }
 
     public static WebDriver getDriver() {
@@ -41,7 +43,9 @@ public class DriverFactory {
     }
 
     public static void quit() {
-        driver.get().quit();
-        driver.remove();
+        if (driver.get() != null) {
+            driver.get().quit();
+            driver.remove();
+        }
     }
 }

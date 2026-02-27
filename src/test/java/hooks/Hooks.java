@@ -4,6 +4,7 @@ import io.cucumber.java.*;
 import driver.DriverFactory;
 import utils.*;
 import com.aventstack.extentreports.*;
+import org.testng.Reporter;
 
 public class Hooks {
 
@@ -13,10 +14,20 @@ public class Hooks {
     @Before("@ui")
     public void setup(Scenario scenario) {
 
-        DriverFactory.initDriver(ConfigReader.get("browser"));
+        // Get browser directly from TestNG XML
+        String browser = Reporter.getCurrentTestResult()
+                .getTestContext()
+                .getCurrentXmlTest()
+                .getParameter("browser");
+
+        if (browser == null) {
+            browser = "chrome"; // fallback safety
+        }
+
+        DriverFactory.initDriver(browser);
 
         ExtentTest extentTest =
-            extent.createTest(scenario.getName());
+                extent.createTest(scenario.getName());
 
         test.set(extentTest);
     }
@@ -24,14 +35,18 @@ public class Hooks {
     @After("@ui")
     public void tearDown(Scenario sc) {
 
-        if (sc.isFailed()) {
+        if (sc.isFailed() && DriverFactory.getDriver() != null) {
             ScreenshotUtil.capture(sc.getName());
             test.get().fail("Test Failed");
-        } else {
+        } else if (test.get() != null) {
             test.get().pass("Test Passed");
         }
 
         DriverFactory.quit();
-        extent.flush(); // VERY IMPORTANT
+    }
+
+    @AfterAll
+    public static void flushReport() {
+        extent.flush();
     }
 }
