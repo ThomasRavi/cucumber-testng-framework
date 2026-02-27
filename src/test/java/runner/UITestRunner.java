@@ -5,7 +5,7 @@ import org.testng.annotations.DataProvider;
 
 @CucumberOptions(
         features = "src/test/resources/features",
-        glue = {"stepdefinitions", "hooks", "api"},
+        glue = {"stepdefinitions", "hooks"},
         tags = "@ui",
         plugin = {
                 "pretty",
@@ -13,7 +13,7 @@ import org.testng.annotations.DataProvider;
                 "rerun:target/failed.txt"
         }
 )
-public class TestRunner extends AbstractTestNGCucumberTests {
+public class UITestRunner extends AbstractTestNGCucumberTests {
 
     @Override
     @DataProvider(parallel = true)

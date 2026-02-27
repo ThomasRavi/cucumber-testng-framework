@@ -77,7 +77,7 @@ jobs:
           done
 
       - name: Run UI Tests
-        run: mvn clean test -Dcucumber.filter.tags="@ui"
+        run: mvn clean test -Dcucumber.filter.tags="@ui" -Dexecution=grid
 
       - name: Stop Selenium Grid
         run: docker compose down

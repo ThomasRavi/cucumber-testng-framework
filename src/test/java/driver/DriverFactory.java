@@ -1,6 +1,8 @@
 package driver;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -11,30 +13,36 @@ public class DriverFactory {
 
     private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
-    private static final String GRID_URL = "http://localhost:4444";
-
     public static void initDriver(String browser) {
+
+        String executionMode = System.getProperty("execution", "local");
 
         try {
 
-            if (browser.equalsIgnoreCase("chrome")) {
+            if (executionMode.equalsIgnoreCase("grid")) {
 
-                ChromeOptions options = new ChromeOptions();
-                driver.set(new RemoteWebDriver(new URL(GRID_URL), options));
+                String gridUrl = "http://localhost:4444";
 
-            } else if (browser.equalsIgnoreCase("firefox")) {
+                if (browser.equalsIgnoreCase("chrome")) {
+                    driver.set(new RemoteWebDriver(new URL(gridUrl), new ChromeOptions()));
+                } else if (browser.equalsIgnoreCase("firefox")) {
+                    driver.set(new RemoteWebDriver(new URL(gridUrl), new FirefoxOptions()));
+                }
 
-                FirefoxOptions options = new FirefoxOptions();
-                driver.set(new RemoteWebDriver(new URL(GRID_URL), options));
+            } else { // LOCAL MODE
 
-            } else {
-                throw new RuntimeException("Unsupported browser: " + browser);
+                if (browser.equalsIgnoreCase("chrome")) {
+                    driver.set(new ChromeDriver());
+                } else if (browser.equalsIgnoreCase("firefox")) {
+                    driver.set(new FirefoxDriver());
+                }
+
             }
 
             driver.get().manage().window().maximize();
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to connect to Selenium Grid", e);
+            throw new RuntimeException("Driver initialization failed", e);
         }
     }
 
