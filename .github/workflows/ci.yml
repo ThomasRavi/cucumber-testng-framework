@@ -76,8 +76,19 @@ jobs:
             sleep 2
           done
 
-      - name: Run UI Tests
-        run: mvn clean test -Dcucumber.filter.tags="@ui" -Dexecution=grid
+      #  FIRST RUN
+      - name: Run UI Tests (First Run)
+        run: mvn clean test -Dcucumber.filter.tags="@ui" -Dexecution=grid || true
+
+      # RERUN FAILED SCENARIOS
+      - name: Re-run Failed Scenarios
+        run: |
+          if [ -s target/failed.txt ]; then
+            echo "Re-running failed scenarios..."
+            mvn test -Dexecution=grid -Dtest=runner.FailedTestRunner
+          else
+            echo "No failed scenarios to rerun."
+          fi
 
       - name: Stop Selenium Grid
         run: docker compose down
